@@ -1,0 +1,125 @@
+* {
+    margin: 0;
+    padding: 0;
+    /* sjdsdksajdksfnda */
+}
+
+body {
+    background-color: #2ECC71;
+    font-family: 'Space Mono', monospace;
+    font-size: 16px;
+}
+
+.player-container {
+    background-color: skyblue;
+    width: 600px;
+    height: 500px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.game-board {
+    background-color: white;
+    width: 300px;
+    height: 300px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.cell {
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    border-width: thin;
+    border-color: black;
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 4.5em;
+    vertical-align: middle;
+    line-height: 100px;
+}
+
+#top-left {
+    border-style: none solid solid none;
+    top: 0%;
+    left: 0%;
+}
+
+#top-centre {
+    border-style: none solid solid solid;
+    top: 0%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#top-right {
+    border-style: none none solid solid;
+    top: 0%;
+    right: 0%;
+}
+
+#centre-left {
+    border-style: solid solid solid none;
+    top: 50%;
+    left: 0%;
+    transform: translateY(-50%);
+}
+
+#centre {
+    border-style: solid;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#centre-right {
+    border-style: solid none solid solid;
+    top: 50%;
+    right: 0%;
+    transform: translateY(-50%);
+}
+
+#bottom-left {
+    border-style: solid solid none none;
+    bottom: 0%;
+    left: 0%;
+}
+
+#bottom-centre {
+    border-style: solid solid none solid;
+    bottom: 0%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#bottom-right {
+    border-style: solid none none solid;
+    bottom: 0%;
+    right: 0%;
+}
+
+.winner-header {
+    position: absolute;
+    top: 4%;
+    left: 50%;
+    transform: translateX(-50%);
+    color: red;
+}
+
+.btn-reset {
+    position: absolute;
+    top: 80%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: none;
+    border: none;
+}
+
+i.material-icons {
+    font-size: 5em;
+}
