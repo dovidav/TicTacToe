@@ -29,10 +29,10 @@ io.on('connection', function (socket) {
     });
     socket.on('selectbox', function (msg) {
         if(user1==io.socket.client.id){
-            socket.broadcast.emit('boxselected','X');
+            socket.broadcast.emit('boxselected','X', msg);
             console.log('X with id ' + socket.client.id + ' selected ' + msg);
         } else if (user1==io.socket.client.id){
-            socket.broadcast.emit('boxselected','O');
+            socket.broadcast.emit('boxselected','O', msg);
             console.log('O with id ' + socket.client.id + ' selected ' + msg);
         }
     });
