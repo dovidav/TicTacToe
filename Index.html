@@ -9,9 +9,9 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
-    <!-- slakdalsdlksndaknd -->
     <div class="player-container">
-        <h1 class="player-name">Player One's turn...</h1>
+        <!-- <h1 class="player-name">Player One's turn...</h1> -->
+        <h1 class="player-name">Waiting for Player Two...</h1>
         <div class = "game-board">
             <div class = "cell" id = "top-left"></div>
             <div class = "cell" id = "top-centre"></div>
@@ -27,5 +27,6 @@
     </div>
     <h1 class="winner-header">Player One Wins!</h1>
 
+    <script src="/socket.io/socket.io.js"></script>    
     <script src="script.js"></script>
 </body>
