@@ -1,3 +1,9 @@
+// var app = require('express')();
+// var http = require('http').Server(app);
+// var io = require('socket.io')(http);
+var socket = io();
+//const io = require('socket.io-client');
+
 var tl = document.querySelector('#top-left');
 var tc = document.querySelector('#top-centre');
 var tr = document.querySelector('#top-right');
@@ -13,10 +19,8 @@ var btnReset = document.querySelector('.btn-reset');
 var player1 = true; //false = player2
 var p1Cells = new Array();
 var p2Cells = new Array();
-var gameOver = false;
+var gameOver = true;
 var draw = false;
-
-//pointless comment to try and get git working...
 
 winnerHeader.style.display = 'none';
 btnReset.style.display = 'none';
@@ -50,13 +54,78 @@ function Clicked(cell, cellNum) {
     if(cell.textContent !== '' || gameOver)
         return;
 
+    socket.emit('selectbox', cellNum);
+
+    // if(player1) {
+    //     cell.textContent = 'X';
+    //     p1Cells.push(cellNum);
+    // } else {
+    //     cell.textContent = 'O';
+    //     p2Cells.push(cellNum);
+    // }
+
+    // if(CheckWinner()) {
+    //     ShowWinner();
+    // } else {
+    //     if(player1)
+    //         playerHeader.textContent = 'Player Two\'s turn...';
+    //     else
+    //         playerHeader.textContent = 'Player One\'s turn...';
+
+    //     player1 = !player1;
+    // }   
+}
+
+//Is there a better way to do this?
+function GetCellByNum(cellNum) {
+    let c;
+
+    switch(cellNum) {
+        case 1:
+            c = tl;
+            break;
+        case 2:
+            c = tc;
+            break;
+        case 3:
+            c = tr;
+            break;
+        case 4:
+            c = cl;
+            break;
+        case 5:
+            c = cc;
+            break;
+        case 6:
+            c = cr;
+            break;
+        case 7:
+            c = bl;
+            break;
+        case 8:
+            c = bc;
+            break;
+        case 9:
+            c = br;
+            break;
+    }
+    return c;
+}
+
+socket.on('boxselected', (xo, cellNum) => {
+    console.log('boxselected entered, xo=' + xo + ', cellNum='+ cellNum);
+
+    let cell = GetCellByNum(cellNum);
+    console.log('cell is ' + cell);
+
+    player1 = xo === 'X';
+
     if(player1) {
-        cell.textContent = 'X';
         p1Cells.push(cellNum);
     } else {
-        cell.textContent = 'O';
         p2Cells.push(cellNum);
     }
+    cell.textContent = xo;
 
     if(CheckWinner()) {
         ShowWinner();
@@ -68,7 +137,36 @@ function Clicked(cell, cellNum) {
 
         player1 = !player1;
     }   
-}
+
+});
+
+socket.on('newconnection', msg => {
+    console.log('new connection, msg is ' + msg);
+    //Basic version 1, see note below in 'disconnected'
+
+    switch(msg) {
+        case 'X':
+            //player 1 joined
+            playerHeader.textContent = 'Waiting for Player Two...';
+            break;
+        case 'O':
+            //player 2 joined
+            //Now the game can start
+            gameOver = false;
+            playerHeader.textContent = 'Player One\'s turn...';
+            break;
+        case 'Full':
+            //Full
+            window.location = 'fullup.html';
+    }
+});
+
+socket.on('disconnected', msg => {
+    //Someone left
+    //Need to disable input and probably reset the board, wait for new player or something
+    //If X left, new connection will be X, or something? need to handle all possibilities in 'newconnection'
+
+});
 
 function CheckWinner() {
     //Check for winner and display
