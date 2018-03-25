@@ -16,11 +16,12 @@ var br = document.querySelector('#bottom-right');
 var winnerHeader = document.querySelector('.winner-header');
 var playerHeader = document.querySelector('.player-name');
 var btnReset = document.querySelector('.btn-reset');
-var player1 = true; //false = player2
+var player = '';// = true; //false = player2
 var p1Cells = new Array();
 var p2Cells = new Array();
 var gameOver = true;
 var draw = false;
+var current = false;
 
 winnerHeader.style.display = 'none';
 btnReset.style.display = 'none';
@@ -36,7 +37,7 @@ bc.addEventListener('click', function(){Clicked(bc, '8')});
 br.addEventListener('click', function(){Clicked(br, '9')});
 
 btnReset.addEventListener('click', function(){
-    player1 = true;
+    //player1 = true;
     p1Cells = new Array();
     p2Cells = new Array();
     gameOver = false;
@@ -51,10 +52,14 @@ btnReset.addEventListener('click', function(){
 });
 
 function Clicked(cell, cellNum) {
+    alert(current);
+    if(!current) {
+        return;
+    }
     if(cell.textContent !== '' || gameOver)
         return;
 
-    socket.emit('selectbox', cellNum);
+    socket.emit('selectbox', cell.id);
 
     // if(player1) {
     //     cell.textContent = 'X';
@@ -76,66 +81,38 @@ function Clicked(cell, cellNum) {
     // }   
 }
 
-//Is there a better way to do this?
-function GetCellByNum(cellNum) {
-    let c;
+socket.on('boxselected', (xo, cellID) => {
+    console.log('boxselected entered, xo=' + xo);
+    alert(xo + " = " + player);
 
-    switch(cellNum) {
-        case 1:
-            c = tl;
-            break;
-        case 2:
-            c = tc;
-            break;
-        case 3:
-            c = tr;
-            break;
-        case 4:
-            c = cl;
-            break;
-        case 5:
-            c = cc;
-            break;
-        case 6:
-            c = cr;
-            break;
-        case 7:
-            c = bl;
-            break;
-        case 8:
-            c = bc;
-            break;
-        case 9:
-            c = br;
-            break;
-    }
-    return c;
-}
+    current = xo !== player;
+    
+    alert(xo);
 
-socket.on('boxselected', (xo, cellNum) => {
-    console.log('boxselected entered, xo=' + xo + ', cellNum='+ cellNum);
+    let cell = document.querySelector('#' + cellID).textContent = xo;
+    console.log('cell is ' + cellID);
 
-    let cell = GetCellByNum(cellNum);
-    console.log('cell is ' + cell);
+    //player1 = xo === 'X';
+    // if(player !== xo) {
+    //     return;
+    // }
 
-    player1 = xo === 'X';
-
-    if(player1) {
+    if(xo === 'X') {
         p1Cells.push(cellNum);
     } else {
         p2Cells.push(cellNum);
     }
-    cell.textContent = xo;
+    //cell.textContent = xo;
 
     if(CheckWinner()) {
         ShowWinner();
     } else {
-        if(player1)
+        if(player === 'X')
             playerHeader.textContent = 'Player Two\'s turn...';
         else
             playerHeader.textContent = 'Player One\'s turn...';
 
-        player1 = !player1;
+        //player1 = !player1;
     }   
 
 });
@@ -144,18 +121,25 @@ socket.on('newconnection', msg => {
     console.log('new connection, msg is ' + msg);
     //Basic version 1, see note below in 'disconnected'
 
+    if(player === '') 
+        player = msg;
+
     switch(msg) {
         case 'X':
             //player 1 joined
             playerHeader.textContent = 'Waiting for Player Two...';
+            console.log('player 1 joined');
             break;
         case 'O':
             //player 2 joined
             //Now the game can start
+            //current = true;
+            current = player === 'X';
             gameOver = false;
             playerHeader.textContent = 'Player One\'s turn...';
+            console.log('player 2 joined');
             break;
-        case 'Full':
+            case 'Full':
             //Full
             window.location = 'fullup.html';
     }
@@ -170,7 +154,7 @@ socket.on('disconnected', msg => {
 
 function CheckWinner() {
     //Check for winner and display
-    var pCells = player1 ? p1Cells : p2Cells;
+    var pCells = player === 'X' ? p1Cells : p2Cells;
 
     if(pCells.length < 3)
         return false;
@@ -218,7 +202,7 @@ function ShowWinner() {
     var s = '';
     if(draw) {
         s = 'It\'s a Draw!';
-    } else if(player1) {    
+    } else if(player === 'X') {    
         s = 'Player One Wins!';
     } else {
         s = 'Player Two Wins!';
