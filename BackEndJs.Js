@@ -16,12 +16,13 @@ io.on('connection', function (socket) {
     if(user1==''){
         user1 = socket.client.id;
         //io.sockets.broadcast.emit('newconnection','X');
-        socket.broadcast.emit('newconnection','X');
+        //socket.broadcast.emit('newconnection','X');
+        io.emit('newconnection','X');
         console.log('X connected with id ' + socket.client.id);
     } else if(user2=='') {
         user2=socket.client.id;
         // io.sockets.broadcast.emit('newconnection','O');
-        socket.broadcast.emit('newconnection','O');
+        io.emit('newconnection','O');
         console.log('O connected with id ' + socket.client.id);
     } else {
         io.sockets.connected[socket.client.id].emit('newconnection','Full');
@@ -38,10 +39,10 @@ io.on('connection', function (socket) {
     });
     socket.on('selectbox', function (msg) {
         if(user1==socket.client.id){
-            socket.broadcast.emit('boxselected','X', msg);
+            io.emit('boxselected','X', msg);
             console.log('X with id ' + socket.client.id + ' selected ' + msg);
         } else if (user2==socket.client.id){
-            socket.broadcast.emit('boxselected','O', msg);
+            io.emit('boxselected','O', msg);
             console.log('O with id ' + socket.client.id + ' selected ' + msg);
         }
     });
