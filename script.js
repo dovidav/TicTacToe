@@ -52,7 +52,7 @@ btnReset.addEventListener('click', function(){
 });
 
 function Clicked(cell, cellNum) {
-    alert(current);
+    //alert(current);
     if(!current) {
         return;
     }
@@ -81,13 +81,48 @@ function Clicked(cell, cellNum) {
     // }   
 }
 
+function GetCellNumFromID(cellID) {
+    let n = 0;
+
+    switch(cellID) {
+        case 'top-left':
+            n = 1;
+            break;
+        case 'top-centre':
+            n = 2;
+            break;
+        case 'top-right':
+            n = 3;
+            break;
+        case 'centre-left':
+            n = 4;
+            break;
+        case 'centre':
+            n = 5;
+            break;
+        case 'centre-right':
+            n = 6;
+            break;
+        case 'bottom-left':
+            n = 7;
+            break;
+        case 'bottom-centre':
+            n = 8;
+            break;
+        case 'bottom-right':
+            n = 9;
+    }
+
+    return n;
+}
+
 socket.on('boxselected', (xo, cellID) => {
     console.log('boxselected entered, xo=' + xo);
-    alert(xo + " = " + player);
+    //alert(xo + " = " + player);
 
     current = xo !== player;
     
-    alert(xo);
+    //alert(xo);
 
     let cell = document.querySelector('#' + cellID).textContent = xo;
     console.log('cell is ' + cellID);
@@ -97,6 +132,9 @@ socket.on('boxselected', (xo, cellID) => {
     //     return;
     // }
 
+    let cellNum = GetCellNumFromID(cellID);
+
+    console.log('cellNum is ' + cellNum);
     if(xo === 'X') {
         p1Cells.push(cellNum);
     } else {
@@ -155,7 +193,7 @@ socket.on('disconnected', msg => {
 function CheckWinner() {
     //Check for winner and display
     var pCells = player === 'X' ? p1Cells : p2Cells;
-
+console.log(`(${player}) pCells: ${pCells}`);
     if(pCells.length < 3)
         return false;
 
@@ -175,19 +213,22 @@ function CheckWinner() {
             for(var cellNum of pCells) {
                 //Loop for each player cell
 
-                    if(cellNum === comboNum) {
-    
+                //cellNum is type integer but comboNum is type string
+                //Therefore must use == here NOT ===
+                if(cellNum == comboNum) {
                     cnFound = true;
                     break;
                 }
             }
 
-            if(cnFound) {
-                comboMatched = true;
-            } else {
-                comboMatched = false;
-                break;
-            }
+            // if(cnFound) {
+            //     comboMatched = true;
+            // } else {
+            //     comboMatched = false;
+            //     break;
+            // }
+            comboMatched = cnFound;
+            if(!comboMatched) break;
         }
 
         if(comboMatched) break;
@@ -195,6 +236,7 @@ function CheckWinner() {
 
     draw = (p1Cells.length + p2Cells.length === 9) && !comboMatched;
     gameOver = (comboMatched || draw);
+    
     return gameOver;
 }
 
